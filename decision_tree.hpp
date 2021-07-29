@@ -101,17 +101,13 @@ class DecisionTreeRegressor {
             int i = 0;
             while (i < data.size()) {
                 double x_i = data[i][feature];
-                while (true) {
+                do {
                     double y = data[i].back();
                     stats_left.push(y);
                     stats_right.pop(y);
-                    if (i+1 < data.size() && data[i+1][feature] == x_i) {
-                        ++i;
-                    }
-                    else {
-                        break;
-                    }
-                }
+                    ++i;
+                } while (i < data.size() && data[i][feature] == x_i);
+                
                 if (stats_left.size() < m_parameters.min_leaf_size) {
                     continue;
                 }
@@ -119,17 +115,16 @@ class DecisionTreeRegressor {
                     break;
                 }
                 
-                std::cout << ">>> " << stats_left.size() << ' ' << stats_right.size() << std::endl;
-                
                 double avg_variance = (double)stats_left.size()/data.size() * stats_left.variance() +
                                       (double)stats_right.size()/data.size() * stats_right.variance();
                 double gain = var_before_split - avg_variance;
-
+                
                 if (gain > max_gain) {
                     max_gain = gain;
-                    best_threshold = i+1<data.size()? (x_i + data[i+1][feature])/2 : x_i;
+                    best_threshold = i<data.size()? (x_i + data[i][feature])/2 : x_i;
+                    std::cout << ">>> " << stats_left.size() << ' ' << stats_right.size() << ' ' << best_threshold << ' ' << i << std::endl;
                 }
-                ++i;
+                
             }
             return std::make_tuple(best_threshold, max_gain);
         }
@@ -146,6 +141,9 @@ class DecisionTreeRegressor {
                     max_gain = gain;
                 }
             }
+            
+            
+            
             return std::make_tuple(best_feature, best_threshold, max_gain);
         }
         
@@ -173,6 +171,11 @@ class DecisionTreeRegressor {
             }
             
             auto[left,right] = node.data.partition(feature, threshold);
+            
+            if (left.size() < 5 || right.size() < 5) {
+                std::cout << left << std::endl << std::endl;
+                std::cout << right << std::endl << std::endl;
+            }
             
             std::cout << feature << ' ' << threshold << ' ' << gain << ' ' << left.size() << ' ' << right.size() << std::endl;
             
