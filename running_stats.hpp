@@ -1,3 +1,4 @@
+#pragma once
 
 // Reference link: https://www.johndcook.com/blog/standard_deviation/
 // I've actually improved on top of that version to also support the removal
@@ -5,8 +6,9 @@
 // removed data point was, effectively, a point added in the past, so it relies
 // on the caller knowing what it is doing.
 //
-// My version uses less members, as the old variance and average have to be
-// remembered exclusively inside the update methods.
+// My version uses less class members: it discards the previous variance and average,
+// since they only have to be remembered inside the update methods. Therefore,
+// the memory footprint is a bit smaller.
 
 namespace asher {
 
@@ -18,7 +20,7 @@ class RunningStats {
         RunningStats() : m_avg(0), m_s(0), m_n(0) {
         }
 
-        RunningStats(double avg, double var, int n) : m_avg(avg), m_s(var*(n-1)), m_n(n) {
+        RunningStats(double avg, double sum_sqdev, int n) : m_avg(avg), m_s(sum_sqdev), m_n(n) {
         }
 
         void push(double x) {
@@ -41,6 +43,14 @@ class RunningStats {
 
         double variance() const {
             return m_n>1? m_s/(m_n-1) : 0;
+        }
+        
+        double sum_sqdev() const {
+            return m_s;
+        }
+        
+        int size() const {
+            return m_n;
         }
 
     private:
