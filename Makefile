@@ -1,5 +1,5 @@
 ALL=decision_tree_test
-CPPFLAGS=-Wall -Wextra -pedantic --std=c++17 -O3 -pthread
+CPPFLAGS=-Wall -Wextra -pedantic --std=c++17 -O0 -g -pthread
 
 all: $(ALL)
 

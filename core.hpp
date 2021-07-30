@@ -72,6 +72,7 @@ class DataView {
         }
 
         RealV& operator[](int index) {
+            assert(index < size());
             return *(m_begin+index);
         }
 

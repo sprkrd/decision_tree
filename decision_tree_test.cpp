@@ -16,8 +16,9 @@ int main() {
     }
     
     asher::DecisionTreeRegressor estimator;
-    estimator.set_min_leaf_size(5);
-    estimator.fit(x, y);
+    estimator.set_min_leaf_size(10).fit(x, y);
+
+    cout << estimator.to_dot() << endl;
     
     //~ asher::RunningStats stats;
 
